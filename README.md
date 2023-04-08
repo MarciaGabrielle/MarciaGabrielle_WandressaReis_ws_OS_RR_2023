@@ -15,13 +15,11 @@
 <br></br>
 ## Como compilar o Jogo da Forca no Terminal Linux:
 
-✨ /mnt/c/Users/reisw/OneDrive/Documentos/
-
-✨ MarciaGabrielle_WandressaReis_ws_OS_RR_2023$
+✨ cd /mnt/c/Users/reisw/OneDrive/Documentos/MarciaGabrielle_WandressaReis_ws_OS_RR_2023$
 
 ✨ gcc forca.c -o forca
 
-✨ .\forca
+✨ ./forca
 <br></br>
 ## Como instalar a biblioteca pthread na WSL:
 
