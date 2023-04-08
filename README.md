@@ -6,7 +6,6 @@
 </h2>
 <h3 align="center"> 👾 Servidor de Jogos para Match 👾</h3>
 <br></br>
-
 ## Como compilar o Jogo da Velha no terminal do Windows (VSCODE):
 
 ✨ gcc -o jogo_da_velha jogo_da_velha.c
