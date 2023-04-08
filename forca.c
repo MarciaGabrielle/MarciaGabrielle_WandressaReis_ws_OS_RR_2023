@@ -39,7 +39,7 @@ void* handle_guess(void* arg) {
             printf("Correct guess!\n");
             printf("Hidden word: %s\n", hidden_word);
             if (strcmp(hidden_word, word) == 0) {
-                printf("You win!\n");
+                printf("Você ganhou!\n");
                 game_over = true;
             }
         }
