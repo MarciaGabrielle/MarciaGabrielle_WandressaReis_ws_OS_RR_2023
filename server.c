@@ -1,250 +1,218 @@
-/*
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <string.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <pthread.h>
+#include <time.h>       // Biblioteca padrão de funções de tempo
+#include <stdio.h>      // Biblioteca padrão de entrada e saída
+#include <stdlib.h>     // Biblioteca padrão de funções
+#include <string.h>     // Biblioteca padrão de manipulação de strings
+#include <sys/socket.h> // Biblioteca padrão de soquetes
+#include <arpa/inet.h>  // Biblioteca padrão de endereços de internet
+#include <unistd.h>     // Biblioteca padrão de funções de entrada e saída
+#include <pthread.h>    // Biblioteca padrão de threads
+#include <stdbool.h>    // Biblioteca padrão de variáveis booleanas
 
-#define MAX_CLIENTS 2
+#define NULL_CHAR '\0'  // Caractere nulo
+#define HIDDEN_CHAR '_' // Caractere para representar letras não descobertas
 
-void *client_handler(void *arg) {
-    int client_sock = *((int*)arg);
-    char buffer[256];
-    int n;
+#define PORT 8080        // Porta do servidor
+#define BUFFER_SIZE 2048 // Tamanho do buffer
+#define MAX_WORD_SIZE 50 // Tamanho máximo da palavra
 
-    while ((n = read(client_sock, buffer, 255)) > 0) {
-        buffer[n] = '\0';
-        printf("Received message: %s\n", buffer);
-        write(client_sock, "I got your message", 18);
+#define MAX_CLIENTS 2  // Número máximo de clientes
+#define MAX_ATTEMPTS 5 // Número máximo de tentativas
+
+// Client Messages
+#define MSG_GUESS "Digite uma letra: "                      // Mensagem para pedir uma letra
+#define MSG_WIN "Você ganhou! A palavra era: "              // Mensagem de vitória
+#define MSG_LOSE "Você perdeu! A palavra era: "             // Mensagem de derrota
+#define COR_GUESS "Suposição correta!"                      // Mensagem de suposição correta
+#define WRG_GUESS "Letra incorreta! Tentativas restantes: " // Mensagem de suposição incorreta
+#define END_GAME "Fim de jogo!"                             // Mensagem de fim de jogo
+
+char word[MAX_WORD_SIZE]; // Palavra escolhida para o jogo
+
+int new_socket[MAX_CLIENTS]; // Array de descritores de soquete para os clientes
+pthread_t tid[MAX_CLIENTS];  // Array de identificadores de threads para os clientes
+pthread_mutex_t mutex;       // Mutex para proteger o acesso à variável word
+
+int inicializar_socket();                            // Função para inicializar o socket
+void *handle_guess(void *arg);                       // Função para lidar com as suposições dos clientes
+void escolher_palavra_aleatoria(char *result);       // Função para escolher uma palavra aleatória do arquivo
+void receber_mensagem(int new_socket, char *buffer); // Função para receber uma mensagem do cliente
+void enviar_mensagem(int new_socket, char *buffer);  // Função para enviar uma mensagem para o cliente
+
+int main() // Função Principal
+{
+    int sock = 0;                // Descritor de soquete
+    struct sockaddr_in cli_addr; // Estrutura de endereço de internet
+
+    escolher_palavra_aleatoria(word); // Escolhe uma palavra aleatória do arquivo
+
+    printf("Palavra escolhida para os jogos: %s\n", word); // Imprime a palavra escolhida
+
+    sock = inicializar_socket(); // Inicializa o socket
+
+    pthread_mutex_init(&mutex, NULL); // Inicializa o mutex
+
+    int client_count = 0;              // Contador de clientes
+    while (client_count < MAX_CLIENTS) // Enquanto o número de clientes for menor que o máximo
+    {
+        int clilen = sizeof(cli_addr);                                                               // Tamanho da estrutura de endereço de internet
+        new_socket[client_count] = accept(sock, (struct sockaddr *)&cli_addr, (socklen_t *)&clilen); // Aceita a conexão do cliente
+
+        pthread_create(&tid[client_count], NULL, handle_guess, &new_socket[client_count]); // Cria uma thread para lidar com as suposições do cliente
+
+        client_count++; // Incrementa o contador de clientes
     }
 
-    close(client_sock);
-
-    pthread_exit(NULL);
-}
-
-int main() {
-    int server_sock, client_sock;
-    struct sockaddr_in server_addr, client_addr;
-    socklen_t client_len;
-    pthread_t threads[MAX_CLIENTS];
-    int rc, i;
-
-    server_sock = socket(AF_INET, SOCK_STREAM, 0);
-    if (server_sock < 0) {
-        perror("Error creating socket");
-        exit(1);
+    for (int i = 0; i < MAX_CLIENTS; i++) // Para cada cliente
+    {
+        pthread_join(tid[i], NULL); // Aguarda a thread do cliente terminar
     }
 
-    bzero((char*) &server_addr, sizeof(server_addr));
-    server_addr.sin_family = AF_INET;
-    server_addr.sin_addr.s_addr = INADDR_ANY;
-    server_addr.sin_port = htons(8888);
+    pthread_mutex_destroy(&mutex); // Destroi o mutex
 
-    if (bind(server_sock, (struct sockaddr*) &server_addr, sizeof(server_addr)) < 0) {
-        perror("Error binding socket");
-        exit(1);
-    }
-
-    listen(server_sock, 5);
-
-    while (1) {
-        client_len = sizeof(client_addr);
-        client_sock = accept(server_sock, (struct sockaddr*) &client_addr, &client_len);
-
-        if (client_sock < 0) {
-            perror("Error accepting connection");
-            continue;
-        }
-
-        // Limit the number of clients to MAX_CLIENTS
-        if (pthread_active_count() - 1 >= MAX_CLIENTS) {
-            printf("Max clients reached, rejecting connection\n");
-            close(client_sock);
-            continue;
-        }
-
-        rc = pthread_create(&threads[i], NULL, client_handler, (void*) &client_sock);
-        if (rc) {
-            perror("Error creating thread");
-            close(client_sock);
-            continue;
-        }
-
-        i++;
-
-        // Wait for threads to exit before reusing their IDs
-        if (i >= MAX_CLIENTS) {
-            for (int j = 0; j < MAX_CLIENTS; j++) {
-                pthread_join(threads[j], NULL);
-            }
-
-            i = 0;
-        }
-    }
-
-    close(server_sock);
-
-    return 0;
-}
-*/
-
-#include <time.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <unistd.h>
-#include <pthread.h>
-#include <stdbool.h>
-
-#define PORT 8080
-#define PLAYER_COUNT 2
-#define MAX_ATTEMPTS 5
-
-pthread_t tid[PLAYER_COUNT];
-bool game_over = false;
-pthread_mutex_t mutex; // serve para proteger uma região crítica.
-
-int inicializar_socket();
-char* escolher_palavra_aleatoria(char* result);
-void receber_mensagem(int new_socket, char* buffer);
-void enviar_mensagem(int new_socket, char* buffer);
-
-int main() {
-    char word[100];
-    char secret_word[100];
-    char buffer[1024] = {0};
-
-    escolher_palavra_aleatoria(word);
-
-    memset(secret_word, '_', strlen(word));
-
-    int socket = inicializar_socket();
-    pthread_mutex_init(&mutex, NULL);
-
-    while (true) {
-        receber_mensagem(socket, buffer);
-        enviar_mensagem(socket, buffer);
-    }
-
-    for (int i = 0; i < PLAYER_COUNT; i++) {
-        pthread_join(tid[i], NULL);
-    }
-    
-    pthread_mutex_destroy(&mutex);
-
-    return 0;
+    return 0; // Retorna 0
 }
 
 void *handle_guess(void *arg)
 {
-    char guess;
-    while (!game_over)
+    int sock = *(int *)arg; // Descritor de soquete do cliente
+
+    char guess;                             // Letra suposta
+    char word_local[MAX_WORD_SIZE];         // Palavra escolhida para o jogo
+    int tent_restantes = MAX_ATTEMPTS;      // Número de tentativas restantes
+    char palavra_escondida[MAX_WORD_SIZE];  // Palavra escondida
+    char buffer[BUFFER_SIZE] = {NULL_CHAR}; // Buffer
+
+    pthread_mutex_lock(&mutex);   // Bloqueia o acesso à variável word
+    strcpy(word_local, word);     // Copia a palavra escolhida para o jogo
+    pthread_mutex_unlock(&mutex); // Desbloqueia o acesso à variável word
+
+    int word_size = strlen(word_local); // Tamanho da palavra
+
+    bool game_over = false; // Variável para indicar se o jogo acabou
+    bool win = false;       // Variável para indicar se o jogador ganhou
+
+    memset(palavra_escondida, HIDDEN_CHAR, word_size); // Preenche a palavra escondida com o caractere de letra não descoberta
+    palavra_escondida[word_size] = NULL_CHAR;          // Adiciona o caractere nulo no final da palavra
+
+    read(sock, buffer, BUFFER_SIZE);                         // Lê a mensagem do cliente
+    memset(buffer, NULL_CHAR, BUFFER_SIZE);                  // Limpa o buffer
+    sprintf(buffer, "%s\n%s", palavra_escondida, MSG_GUESS); // Formata a mensagem para enviar para o cliente
+
+    while (!game_over) // Enquanto o jogo não acabou
     {
-        printf("\nDigite uma letra: ");
-        scanf("%c", &guess);
-        getchar();                  // consume newline
-        pthread_mutex_lock(&mutex); // obter exclusão mútua
-        int i;
-        bool found = false;
-        for (i = 0; i < strlen(word); i++)
+        enviar_mensagem(sock, buffer); // Envia a mensagem para o cliente
+
+        receber_mensagem(sock, buffer); // Recebe a mensagem do cliente
+        guess = buffer[0];              // Pega a primeira letra da mensagem
+
+        memset(buffer, NULL_CHAR, BUFFER_SIZE); // Limpa o buffer
+
+        bool found = false;                 // Variável para indicar se a letra foi encontrada
+        for (int i = 0; i < word_size; i++) // Para cada letra da palavra
         {
-            if (word[i] == guess)
+            bool isGuessCorrect = word_local[i] == guess; // Verifica se a letra suposta é igual a letra da palavra
+
+            if (isGuessCorrect) // Se a letra suposta for igual a letra da palavra
             {
-                palavra_escondida[i] = guess;
-                found = true;
+                palavra_escondida[i] = guess; // Mostra a letra na palavra escondida
+                found = true;                 // Indica que a letra foi encontrada
             }
         }
-        if (!found)
+
+        if (!found) // Se a letra não foi encontrada
         {
-            tent_restantes--;
-            printf("Letra incorreta! Tentativas restantes: %d\n", tent_restantes);
-            if (tent_restantes == 0)
+            tent_restantes--;                                                                          // Decrementa o número de tentativas restantes
+            sprintf(buffer, "%s %d\n%s\n%s", WRG_GUESS, tent_restantes, palavra_escondida, MSG_GUESS); // Formata a mensagem para enviar para o cliente
+            if (tent_restantes == 0)                                                                   // Se o número de tentativas restantes for igual a 0
             {
-                printf("Você perdeu! A palavra era: %s\n", word);
-                game_over = true;
+                game_over = true; // Indica que o jogo acabou
             }
         }
-        else
+        else // Se a letra foi encontrada
         {
-            printf("Suposição correta\n");
-            printf("Palavra escondida: %s\n", palavra_escondida);
-            if (strcmp(palavra_escondida, word) == 0)
-            {
-                printf("Você ganhou!\n");
-                game_over = true;
-            }
+            sprintf(buffer, "%s\n%s\n%s", COR_GUESS, palavra_escondida, MSG_GUESS); // Formata a mensagem para enviar para o cliente
         }
-        pthread_mutex_unlock(&mutex); // liberar a região crítica
-    }
-    pthread_exit(NULL);
-}
 
-char* escolher_palavra_aleatoria(char* result) {
-    FILE *fp;
-    char line[100];
-    int count = 0, target_line, current_line = 0;
+        bool isWordRevealed = strcmp(palavra_escondida, word_local) == 0; // Verifica se a palavra foi revelada
 
-    // abre o arquivo
-    fp = fopen("./palavras.txt", "r");
-
-    // conta o número de linhas do arquivo
-    while (fgets(line, sizeof(line), fp) != NULL) {
-        count++;
+        if (isWordRevealed) // Se a palavra foi revelada
+        {
+            game_over = true; // Indica que o jogo acabou
+            win = true;       // Indica que o jogador ganhou
+        }
     }
 
-    // gera um número aleatório entre 0 e o número de linhas do arquivo
-    srand(time(NULL));
-    target_line = rand() % count;
+    sprintf(buffer, "%s%s\n%s\n", win ? MSG_WIN : MSG_LOSE, word_local, END_GAME); // Formata a mensagem para enviar para o cliente
 
-    // volta ao início do arquivo
-    rewind(fp);
+    enviar_mensagem(sock, buffer); // Envia a mensagem para o cliente
 
-    // fecha o arquivo
-    fclose(fp);
-
-    line[strcspn(line, "\n")] = '\0'
-
-    strcpy(result, line);
+    pthread_exit(NULL); // Encerra a thread
+    close(sock);        // Fecha o soquete
 }
 
-int inicializar_socket() {
-    int server_fd, new_socket, mensagem_do_cliente;
-    struct sockaddr_in address;
-    int opt = 1;
-    int addrlen = sizeof(address);
+void escolher_palavra_aleatoria(char *result)
+{
+    FILE *fp;                    // Ponteiro para o arquivo
+    char line[MAX_WORD_SIZE];    // Linha do arquivo
+    int count = 0;               // Contador de linhas
+    int random_line_number;      // Número da linha aleatória
+    int current_line_number = 0; // Número da linha atual
 
-    server_fd = socket(AF_INET, SOCK_STREAM, 0);
+    fp = fopen("./resources/palavras.txt", "r"); // Abre o arquivo
 
-    setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt));
+    while (fgets(line, sizeof(line), fp) != NULL) // Enquanto não chegar ao final do arquivo
+    {
+        count++; // Incrementa o contador de linhas
+    }
 
-    address.sin_family = AF_INET;
-    address.sin_addr.s_addr = INADDR_ANY;
-    address.sin_port = htons(PORT);
+    srand(time(NULL));                   // Inicializa o gerador de números aleatórios
+    random_line_number = rand() % count; // Gera um número aleatório entre 0 e o número de linhas do arquivo
 
-    bind(server_fd, (struct sockaddr *)&address, sizeof(address));
+    rewind(fp); // Volta para o início do arquivo
 
-    listen(server_fd, 3);
+    while (fgets(line, sizeof(line), fp) != NULL) // Enquanto não chegar ao final do arquivo
+    {
+        if (current_line_number == random_line_number) // Se o número da linha atual for igual ao número da linha aleatória
+        {
+            line[strcspn(line, "\n")] = '\0'; // Remove o caractere de nova linha
+            strcpy(result, line);             //    Copia a linha para o resultado
+            break;                            // Sai do laço
+        }
+        current_line_number++; // Incrementa o número da linha atual
+    }
 
-    new_socket = accept(server_fd, (struct sockaddr *)&address, (socklen_t*)&addrlen);
-
-    return new_socket;
+    fclose(fp); // Fecha o arquivo
 }
 
-void receber_mensagem(int new_socket, char* buffer) {
-    int mensagem_do_cliente = read(new_socket, buffer, 1024);
-    printf("Client: %s\n", buffer);
-    memset(buffer, 0, sizeof(buffer));
+int inicializar_socket()
+{
+    int server_fd;              // Soquete do servidor
+    struct sockaddr_in address; // Endereço do servidor
+    int opt = 1;                // Opção para o setsockopt
+
+    server_fd = socket(AF_INET, SOCK_STREAM, 0); // Cria o soquete do servidor
+
+    setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)); // Define as opções do soquete
+
+    address.sin_family = AF_INET;         // Define o domínio do soquete
+    address.sin_addr.s_addr = INADDR_ANY; // Define o endereço do soquete
+    address.sin_port = htons(PORT);       // Define a porta do soquete
+
+    bind(server_fd, (struct sockaddr *)&address, sizeof(address)); // Associa o soquete ao endereço
+
+    listen(server_fd, 3); // Define o número máximo de conexões pendentes
+
+    return server_fd; // Retorna o soquete do servidor
 }
 
-void enviar_mensagem(int new_socket, char* buffer) {
-    printf("Enter message for client: ");
-    scanf("%[^\n]%*c", buffer);
-    send(new_socket, buffer, strlen(buffer), 0);
-    memset(buffer, 0, sizeof(buffer));
+void receber_mensagem(int new_socket, char *buffer)
+{
+    read(new_socket, buffer, BUFFER_SIZE);              // Lê a mensagem do cliente
+    printf("Client %lu: %s\n", pthread_self(), buffer); // Imprime a mensagem do cliente
+}
+
+void enviar_mensagem(int new_socket, char *buffer)
+{
+    send(new_socket, buffer, strlen(buffer), 0); // Envia a mensagem para o cliente
+    memset(buffer, NULL_CHAR, BUFFER_SIZE);      // Limpa o buffer
 }
