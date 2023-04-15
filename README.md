@@ -1,34 +1,34 @@
 <div align="center">
-<img src= "https://user-images.githubusercontent.com/94376190/230129990-71a2933a-c49e-4117-97ca-30a3271d2a4e.png" width = "100px"
-/>
+<img src= "https://user-images.githubusercontent.com/94376190/230129990-71a2933a-c49e-4117-97ca-30a3271d2a4e.png" width = "100px"/>
+<h2> Sistemas Operacionais: Primeiro Seminário</h2>
+<h3> 👾 Servidor de Jogos para Match 👾</h3>
 </div>
-<h2 align="center"> Sistemas Operacionais: Primeiro Seminário 
-</h2>
-<h3 align="center"> 👾 Servidor de Jogos para Match 👾</h3>
 
+## Como compilar o Jogo da Forca no terminal:
 
-## Como compilar o Jogo da Velha no terminal do Windows (VSCODE):
+```bash
+git clone git@github.com:MarciaGabrielle/MarciaGabrielle_WandressaReis_ws_OS_RR_2023.git
+cd MarciaGabrielle_WandressaReis_ws_OS_RR_2023
+make
+```
 
-✨ gcc -o jogo_da_velha jogo_da_velha.c
+**OBS: se estiver usando WSL ou se a biblioteca pthread não for encontrada, instale-a com o script:**
 
-✨ .\jogo_da_velha
-<br></br>
-## Como compilar o Jogo da Forca no Terminal Linux:
+```bash
+sudo apt update
+sudo apt install build-essential libpthread-stubs0-dev
+```
 
-✨ cd /mnt/c/Users/reisw/OneDrive/Documentos/MarciaGabrielle_WandressaReis_ws_OS_RR_2023
+## Como executar o Jogo da Forca no terminal:
 
-✨ gcc forca.c -o forca
+### Cliente
 
-✨ ./forca
-<br></br>
-## Como instalar a biblioteca pthread na WSL:
+```bash
+./bin/client
+```
 
-✨ sudo apt update
+### Servidor
 
-✨ sudo apt install build-essential
-
-✨ sudo apt install libpthread-stubs0-dev
-<br></br>
-## Para certificar-se de que a biblioteca pthread está utilizável no código
-
-✨ gcc -pthread -o forca forca.c
+```bash
+./bin/server
+```
