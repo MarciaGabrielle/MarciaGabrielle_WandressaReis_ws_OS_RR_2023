@@ -1,50 +1,50 @@
-Absorver
-Acaso
-Acolher
-Acreditar
-Adversário
-Afinidade
-Agilidade
-Alegria
-Alucinar
-Ambição
-Anfitrião
-Anseio
-Aparência
-Apetite
-Apoio
-Atitude
-Atrair
-Autêntico
-Aventura
-Bondade
-Caótico
-Capaz
-Censura
-Ceticismo
-Coerente
-Complicado
-Conhecimento
-Consciente
-Contemplar
-Contraditório
-Convicção
-Coragem
-Cortês
-Criatividade
-Cumplicidade
-Curiosidade
-Decidir
-Delicadeza
-Desafio
-Despertar
-Determinado
-Dificuldade
-Disposição
-Divertir
-Doçura
-Doravante
-Efeito
-Elevar
-Emoção
-Enfrentar
+    amargo
+    amarelo
+    animais
+    aprendiz
+    aqui
+    dirigir
+    azar
+    beleza
+    bicho
+    bloco
+    bom
+    brincar
+    cabana
+    cama
+    caminho
+    caneca
+    carroça
+    casa
+    cidade
+    cobertor
+    comida
+    comprido
+    cor
+    coragem
+    corda
+    couro
+    dança
+    data
+    dinheiro
+    dobrar
+    cristal
+    dormir
+    eleticidade
+    esquerda
+    estrada
+    maternidade
+    feliz
+    festa
+    fogo
+    fome
+    fraco
+    futuro
+    gente
+    javali
+    grade
+    guitarra
+    historiador
+    homem
+    hospital
+    cachorro
