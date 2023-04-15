@@ -21,14 +21,14 @@ sudo apt install build-essential libpthread-stubs0-dev
 
 ## Como executar o Jogo da Forca no terminal:
 
-### Cliente
-
-```bash
-./bin/client
-```
-
 ### Servidor
 
 ```bash
 ./bin/server
+```
+
+### Cliente
+
+```bash
+./bin/client
 ```
