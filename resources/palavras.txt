@@ -1,50 +1,50 @@
-    amargo
-    amarelo
-    animais
-    aprendiz
-    aqui
-    dirigir
-    azar
-    beleza
-    bicho
-    bloco
-    bom
-    brincar
-    cabana
-    cama
-    caminho
-    caneca
-    carroça
-    casa
-    cidade
-    cobertor
-    comida
-    comprido
-    cor
-    coragem
-    corda
-    couro
-    dança
-    data
-    dinheiro
-    dobrar
-    cristal
-    dormir
-    eleticidade
-    esquerda
-    estrada
-    maternidade
-    feliz
-    festa
-    fogo
-    fome
-    fraco
-    futuro
-    gente
-    javali
-    grade
-    guitarra
-    historiador
-    homem
-    hospital
-    cachorro
+amargo
+amarelo
+animais
+aprendiz
+aqui
+dirigir
+azar
+beleza
+bicho
+bloco
+bom
+brincar
+cabana
+cama
+caminho
+caneca
+carroça
+casa
+cidade
+cobertor
+comida
+comprido
+cor
+coragem
+corda
+couro
+dança
+data
+dinheiro
+dobrar
+cristal
+dormir
+eleticidade
+esquerda
+estrada
+maternidade
+feliz
+festa
+fogo
+fome
+fraco
+futuro
+gente
+javali
+grade
+guitarra
+historiador
+homem
+hospital
+cachorro
