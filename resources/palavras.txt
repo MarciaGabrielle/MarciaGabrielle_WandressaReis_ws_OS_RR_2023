@@ -30,6 +30,7 @@ contemplar
 contraditorio
 conviccao
 coragem
+<<<<<<< Updated upstream
 cortes
 criatividade
 cumplicidade
@@ -48,3 +49,31 @@ efeito
 elevar
 emocao
 enfrentar
+=======
+corda
+couro
+canto
+data
+dinheiro
+dobrar
+cristal
+dormir
+eleticidade
+esquerda
+estrada
+maternidade
+feliz
+festa
+fogo
+fome
+fraco
+futuro
+gente
+javali
+grade
+guitarra
+historiador
+homem
+hospital
+cachorro
+>>>>>>> Stashed changes
