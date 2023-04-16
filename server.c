@@ -92,7 +92,7 @@ void *handle_guess(void *arg)
     bool win = false;       // Variável para indicar se o jogador ganhou
 
     memset(palavra_escondida, HIDDEN_CHAR, word_size); // Preenche a palavra escondida com o caractere de letra não descoberta
-    palavra_escondida[word_size] = NULL_CHAR;          // Adiciona o caractere nulo no final da palavra
+    palavra_escondida[word_size -1] = NULL_CHAR;          // Adiciona o caractere nulo no final da palavra
 
     read(sock, buffer, BUFFER_SIZE);                         // Lê a mensagem do cliente
     memset(buffer, NULL_CHAR, BUFFER_SIZE);                  // Limpa o buffer

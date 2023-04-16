@@ -14,7 +14,7 @@ cabana
 cama
 caminho
 caneca
-carroça
+caravana
 casa
 cidade
 cobertor
